@@ -1,33 +1,28 @@
 import { Route, Redirect } from "react-router-dom";
-// import { useSelector } from "react-redux";
-// import _ from "lodash";
 
-const ProtectedRoute = ({ component: Component, ...rest }) => {
-  // const redux = useSelector((state) => state.user);
-  // let user = _.isEmpty(redux);
+const ProtectedRoutes = ({ component: Component, isProtected, ...rest }) => {
   let user = false;
+  if (isProtected) {
+    const token = localStorage.getItem("token");
+    if (token) {
+      user = true;
+    }
+  } else {
+    user = true;
+  }
 
   return (
     <Route
       {...rest}
       render={(props) => {
-        if (!user) {
+        if (user) {
           return <Component {...rest} {...props} />;
         } else {
-          return (
-            <Redirect
-              to={{
-                pathname: "/",
-                state: {
-                  from: props.location,
-                },
-              }}
-            />
-          );
+          return <Redirect to="/" />;
         }
       }}
     />
   );
 };
 
-export default ProtectedRoute;
+export default ProtectedRoutes;
